@@ -67,5 +67,62 @@ class ProductRepositoryTest {
         assertFalse(productIterator.hasNext());
 
     }
+    @Test
+    void testEditProductPositive() {
+        // Create and add a product
+        Product product = new Product();
+        product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        product.setProductName("Sampo Cap Bambang");
+        product.setProductQuantity(100);
+        productRepository.create(product);
+
+        // Edit product details
+        product.setProductName("Sampo Cap Bambang Updated");
+        product.setProductQuantity(120);
+        productRepository.update(product);
+
+        // Retrieve and verify the updated product
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertTrue(productIterator.hasNext());
+        Product updatedProduct = productIterator.next();
+        assertEquals("Sampo Cap Bambang Updated", updatedProduct.getProductName());
+        assertEquals(120, updatedProduct.getProductQuantity());
+    }
+
+    @Test
+    void testEditProductNegative() {
+        // Attempt to edit a non-existent product
+        Product nonExistentProduct = new Product();
+        nonExistentProduct.setProductId("non-existent-id");
+        nonExistentProduct.setProductName("Fake Product");
+        nonExistentProduct.setProductQuantity(999);
+
+        Product result = productRepository.update(nonExistentProduct);
+        assertNull(result, "Expected null when updating a non-existent product");
+    }
+
+    @Test
+    void testDeleteProductPositive() {
+        // Create and add a product
+        Product product = new Product();
+        product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        product.setProductName("Sampo Cap Bambang");
+        product.setProductQuantity(100);
+        productRepository.create(product);
+
+        // Delete the product
+        productRepository.delete("eb558e9f-1c39-460e-8860-71af6af63bd6");
+
+        // Verify the product is deleted
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertFalse(productIterator.hasNext());
+    }
+
+    @Test
+    void testDeleteProductNegative() {
+        // Attempt to delete a non-existent product
+        boolean result = productRepository.delete("non-existent-id");
+        assertFalse(result, "Expected false when deleting a non-existent product");
+    }
 
 }
