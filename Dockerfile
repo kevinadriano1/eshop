@@ -9,6 +9,8 @@ WORKDIR /src/eshop
 # Copy project files into container
 COPY . .
 
+RUN chmod +x ./gradlew
+
 # Build the JAR file using Gradle
 RUN ./gradlew clean bootJar
 
