@@ -86,5 +86,6 @@ sonar {
         property("sonar.projectKey", "kevinadriano1_eshop")
         property("sonar.organization", "kevinadriano1")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml") // ✅ JaCoCo report path
     }
 }
