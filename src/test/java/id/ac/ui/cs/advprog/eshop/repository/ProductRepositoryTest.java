@@ -125,4 +125,40 @@ class ProductRepositoryTest {
         assertFalse(result, "Expected false when deleting a non-existent product");
     }
 
+    @Test
+    void testUpdateOnEmptyRepository() {
+        Product product = new Product();
+        product.setProductId("random-id");
+        product.setProductName("Non-existent Product");
+        product.setProductQuantity(10);
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Expected null when updating on an empty repository");
+    }
+
+    @Test
+    void testDeleteOnEmptyRepository() {
+        boolean result = productRepository.delete("random-id");
+        assertFalse(result, "Expected false when deleting from an empty repository");
+    }
+
+    @Test
+    void testDeleteWithNullId() {
+        boolean result = productRepository.delete(null);
+        assertFalse(result, "Expected false when deleting with a null ID");
+    }
+
+    @Test
+    void testUpdateWithNullId() {
+        Product product = new Product();
+        product.setProductId(null);
+        product.setProductName("Invalid Product");
+        product.setProductQuantity(50);
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Expected null when updating a product with a null ID");
+    }
+
+
+
 }
