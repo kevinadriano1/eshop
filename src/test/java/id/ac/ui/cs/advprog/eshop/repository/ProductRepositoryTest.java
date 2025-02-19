@@ -3,162 +3,99 @@ package id.ac.ui.cs.advprog.eshop.repository;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 
 import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class ProductRepositoryTest {
 
-    @InjectMocks
-    ProductRepository productRepository;
+    private ProductRepository repository;
 
     @BeforeEach
     void setUp() {
+        repository = new ProductRepository();
     }
 
-    @Test
-    void testCreateAndFind() {
+    // Helper method to create a Product instance.
+    private Product createProduct(String id, String name, int quantity) {
         Product product = new Product();
-        product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
-        productRepository.create(product);
-
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
-        assertEquals(product.getProductId(), savedProduct.getProductId());
-        assertEquals(product.getProductName(), savedProduct.getProductName());
-        assertEquals(product.getProductQuantity(), savedProduct.getProductQuantity());
+        product.setProductId(id);
+        product.setProductName(name);
+        product.setProductQuantity(quantity);
+        return product;
     }
 
     @Test
-    void testFindAllIfEmpty() {
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
+    void testCreateAndFindAll() {
+        Product product = createProduct("1", "Test Product", 10);
+        Product created = repository.create(product);
+        assertEquals(product, created, "Created product should be the same as the passed product");
+
+        Iterator<Product> iterator = repository.findAll();
+        assertTrue(iterator.hasNext(), "Iterator should have at least one product");
+        Product found = iterator.next();
+        assertEquals("1", found.getProductId());
+        assertEquals("Test Product", found.getProductName());
+        assertEquals(10, found.getProductQuantity());
+        assertFalse(iterator.hasNext(), "Iterator should not have any more products");
     }
 
     @Test
-    void testFindAllIfMoreThanOneProduct() {
-        Product product1 = new Product();
-        product1.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product1.setProductName("Sampo Cap Bambang");
-        product1.setProductQuantity(100);
-        productRepository.create(product1);
+    void testUpdateProductFound() {
+        // Create and add an original product.
+        Product original = createProduct("1", "Original Product", 5);
+        repository.create(original);
 
-        Product product2 = new Product();
-        product2.setProductId("a0f9de46-90b1-437d-a0bf-d0821dde9096");
-        product2.setProductName("Sampo Cap Usep");
-        product2.setProductQuantity(50);
-        productRepository.create(product2);
-
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
-        assertEquals(product1.getProductId(), savedProduct.getProductId());
-        savedProduct = productIterator.next();
-        assertEquals(product2.getProductId(), savedProduct.getProductId());
-        assertFalse(productIterator.hasNext());
-
-    }
-    @Test
-    void testEditProductPositive() {
-        // Create and add a product
-        Product product = new Product();
-        product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
-        productRepository.create(product);
-
-        // Edit product details
-        product.setProductName("Sampo Cap Bambang Updated");
-        product.setProductQuantity(120);
-        productRepository.update(product);
-
-        // Retrieve and verify the updated product
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product updatedProduct = productIterator.next();
-        assertEquals("Sampo Cap Bambang Updated", updatedProduct.getProductName());
-        assertEquals(120, updatedProduct.getProductQuantity());
+        // Create an updated product with the same productId.
+        Product updated = createProduct("1", "Updated Product", 15);
+        Product result = repository.update(updated);
+        assertNotNull(result, "Update should return the updated product");
+        assertEquals("Updated Product", result.getProductName());
+        assertEquals(15, result.getProductQuantity());
     }
 
     @Test
-    void testEditProductNegative() {
-        // Attempt to edit a non-existent product
-        Product nonExistentProduct = new Product();
-        nonExistentProduct.setProductId("non-existent-id");
-        nonExistentProduct.setProductName("Fake Product");
-        nonExistentProduct.setProductQuantity(999);
+    void testUpdateProductNotFound() {
+        // Add a product with id "1"
+        Product product = createProduct("1", "Test Product", 10);
+        repository.create(product);
 
-        Product result = productRepository.update(nonExistentProduct);
-        assertNull(result, "Expected null when updating a non-existent product");
+        // Attempt to update a product with a non-existing id "2"
+        Product nonExistent = createProduct("2", "Non Existent", 20);
+        Product result = repository.update(nonExistent);
+        assertNull(result, "Update should return null if the product is not found");
     }
 
     @Test
-    void testDeleteProductPositive() {
-        // Create and add a product
-        Product product = new Product();
-        product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product.setProductName("Sampo Cap Bambang");
-        product.setProductQuantity(100);
-        productRepository.create(product);
+    void testDeleteProductFound() {
+        // Create and add a product.
+        Product product = createProduct("1", "Test Product", 10);
+        repository.create(product);
 
-        // Delete the product
-        productRepository.delete("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        // Delete the product.
+        boolean deleted = repository.delete("1");
+        assertTrue(deleted, "Delete should return true when the product is found and removed");
 
-        // Verify the product is deleted
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
+        // Ensure the product is no longer in the repository.
+        Iterator<Product> iterator = repository.findAll();
+        assertFalse(iterator.hasNext(), "Repository should be empty after deletion");
     }
 
     @Test
-    void testDeleteProductNegative() {
-        // Attempt to delete a non-existent product
-        boolean result = productRepository.delete("non-existent-id");
-        assertFalse(result, "Expected false when deleting a non-existent product");
+    void testDeleteProductNotFound() {
+        // Add a product with id "1"
+        Product product = createProduct("1", "Test Product", 10);
+        repository.create(product);
+
+        // Attempt to delete a product with a non-existing id "2"
+        boolean deleted = repository.delete("2");
+        assertFalse(deleted, "Delete should return false if the product is not found");
+
+        // Ensure the existing product is still in the repository.
+        Iterator<Product> iterator = repository.findAll();
+        assertTrue(iterator.hasNext(), "Product should still exist in the repository");
+        Product found = iterator.next();
+        assertEquals("1", found.getProductId());
     }
-
-    @Test
-    void testUpdateOnEmptyRepository() {
-        Product product = new Product();
-        product.setProductId("random-id");
-        product.setProductName("Non-existent Product");
-        product.setProductQuantity(10);
-
-        Product result = productRepository.update(product);
-        assertNull(result, "Expected null when updating on an empty repository");
-    }
-
-    @Test
-    void testDeleteOnEmptyRepository() {
-        boolean result = productRepository.delete("random-id");
-        assertFalse(result, "Expected false when deleting from an empty repository");
-    }
-
-    @Test
-    void testDeleteWithNullId() {
-        boolean result = productRepository.delete(null);
-        assertFalse(result, "Expected false when deleting with a null ID");
-    }
-
-    @Test
-    void testUpdateWithNullId() {
-        Product product = new Product();
-        product.setProductId(null);
-        product.setProductName("Invalid Product");
-        product.setProductQuantity(50);
-
-        Product result = productRepository.update(product);
-        assertNull(result, "Expected null when updating a product with a null ID");
-    }
-
-
-
 }

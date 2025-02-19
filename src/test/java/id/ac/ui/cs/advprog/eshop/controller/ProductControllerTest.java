@@ -145,5 +145,27 @@ class ProductControllerTest {
                 .andExpect(redirectedUrl("/product/list"));
 
         verify(productService, times(1)).delete(productId);
+
     }
+    /*** ✅ Test GET /product/edit/{id} - Edge Case: Product has null id ***/
+    @Test
+    void testEditProductPage_ProductWithNullId() throws Exception {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId(null);
+        product.setProductName("Product with null id");
+        product.setProductQuantity(5);
+
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        when(productService.findAll()).thenReturn(productList);
+
+        // Attempt to access edit page with any id. Since the product's id is null, it should not match.
+        mockMvc.perform(get("/product/edit/{id}", "anyId"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/product/list"));
+
+        verify(productService, times(1)).findAll();
+    }
+
 }
