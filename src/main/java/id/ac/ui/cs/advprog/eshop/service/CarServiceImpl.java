@@ -23,7 +23,10 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<Car> findAll() {
-        return carRepository.findAll();
+        Iterator<Car> carIterator = carRepository.findAll();
+        List<Car> allCar = new ArrayList<>();
+        carIterator.forEachRemaining(allCar::add);
+        return allCar;
     }
 
     @Override
@@ -43,4 +46,5 @@ public class CarServiceImpl implements CarService {
         // TODO Auto-generated method stub
         carRepository.delete(carId);
     }
+
 }
