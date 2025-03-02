@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderRepositoryTest {
     OrderRepository orderRepository;
@@ -117,6 +116,13 @@ class OrderRepositoryTest {
         assertEquals(2, orderList.size());
     }
 
+    @Test
+    void testFindAllByAuthorIfAllLowercase() {
+        orderRepository.save(orders.get(1));
 
+        List<Order> orderList = orderRepository.findAllByAuthor(
+                orders.get(1).getAuthor().toLowerCase());
+        assertTrue(orderList.isEmpty());
+    }
 
 }
