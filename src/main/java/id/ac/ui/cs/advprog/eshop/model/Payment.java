@@ -1,16 +1,13 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
 import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
-
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import lombok.Getter;
 
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 public class Payment {
-    private static final Set<String> ALLOWED_STATUSES = Set.of("SUCCESS", "REJECTED");
-
     String id;
     String method;
     String status;
@@ -28,7 +25,7 @@ public class Payment {
     }
 
     public void setStatus(String status) {
-        if (ALLOWED_STATUSES.contains(status)) {
+        if (PaymentStatus.contains(status)) {
             this.status = status;
         } else {
             throw new IllegalArgumentException();
