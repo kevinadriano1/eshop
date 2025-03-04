@@ -81,7 +81,7 @@ class ProductController {
 ```
 Brittle Inheritance (LSP Violation):
 
-Extending unrelated controllers introduces unnecessary methods, causing unintended behavior.
+Extending unrelated controllers introduces unnecessary methods, causing unintended behavior. 
 Example (Violation):
 ```
 class CarController extends ProductController {
@@ -98,3 +98,27 @@ Example (Violation):
 CarServiceImpl carService; // concrete dependency
 ```
 Hard to switch implementations (e.g., from MySQL to PostgreSQL) without extensive code changes.
+
+## Module 4
+### Reflection 1
+
+Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.
+
+The TDD approach helped ensure that each function in the OrderService and OrderRepository classes was implemented based on the predefined requirements. Writing tests before implementation provided a clear guideline on expected behavior, reducing ambiguity in development.
+the tests identified missing functionalities, such as ensuring that an order cannot be updated with an invalid status or duplicated. They also helped detect logical issues, such as incorrect handling of non-existent order IDs.
+writing tests before implementation felt restrictive since it required predicting how the methods should behave before actual implementation. However, as development progressed, it became clear that this approach prevented unnecessary rework.
+The tests currently focus on functionality but could be expanded to cover edge cases more thoroughly. Adding mocking/stubbing for dependencies in complex tests can improve test efficiency.
+
+You have created unit tests in Tutorial. Now reflect whether your tests have successfully followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you create more tests.
+
+Fast: yes, The tests execute quickly since they use in-memory data (orderData list) rather than querying a database. However, frequent list operations may slow performance as data size increases.
+Independent: yes, Some tests share the same orders list, potentially causing unintended dependencies. Resetting test data before each test would ensure isolation and prevent interference.
+Repeatable: yes, Tests are consistent across multiple runs as they do not depend on external resources.
+Self-Validating: yes, Assertions like assertEquals, assertNull, and assertThrows provide automatic pass/fail validation without requiring manual inspection.
+Timely: yes, Following TDD, tests were created before implementation, shaping development rather than being added retrospectively.
+
+Improvement for Future test:
+Ensure Test Independence: Use @BeforeEach to reset test data before every test to prevent dependencies and maintain a clean state.
+Expand Edge Cases: Add tests for empty product lists, invalid timestamps, and null inputs to improve robustness.
+Use Parameterized Tests: Replace redundant test cases with @ParameterizedTest in JUnit 5 for better maintainability.
+Enhance Mocking & Verification: Improve Mockito usage to isolate components and validate interactions more effectively.
