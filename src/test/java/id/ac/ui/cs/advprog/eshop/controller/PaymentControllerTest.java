@@ -12,9 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,11 +42,15 @@ class PaymentControllerTest {
                 .andExpect(view().name("paymentdetail"));
     }
 
-    /*** ✅ Test GET /payment/detail/{paymentId} ***/
     @Test
     void testShowPaymentDetail() throws Exception {
         String paymentId = UUID.randomUUID().toString();
-        Payment payment = new Payment();
+
+        // Correct constructor usage
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP1234XYZ");
+        Payment payment = new Payment(paymentId, "voucherCode", paymentData, "SUCCESS");
+
         when(paymentService.getPayment(paymentId)).thenReturn(payment);
 
         mockMvc.perform(get("/payment/detail/{paymentId}", paymentId))
@@ -77,7 +79,9 @@ class PaymentControllerTest {
     @Test
     void testShowAdminPaymentDetail() throws Exception {
         String paymentId = UUID.randomUUID().toString();
-        Payment payment = new Payment();
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", "Mandiri");
+        Payment payment = new Payment(paymentId, "bankTransfer", paymentData, "PENDING");
         when(paymentService.getPayment(paymentId)).thenReturn(payment);
 
         mockMvc.perform(get("/payment/admin/detail/{paymentId}", paymentId))
@@ -92,7 +96,9 @@ class PaymentControllerTest {
     @Test
     void testSetPaymentStatus() throws Exception {
         String paymentId = UUID.randomUUID().toString();
-        Payment payment = new Payment();
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP1234XYZ");
+        Payment payment = new Payment(paymentId, "voucherCode", paymentData, "PENDING");
         when(paymentService.getPayment(paymentId)).thenReturn(payment);
 
         mockMvc.perform(post("/payment/admin/set-status/{paymentId}", paymentId)
