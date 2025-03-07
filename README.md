@@ -122,3 +122,23 @@ Ensure Test Independence: Use @BeforeEach to reset test data before every test t
 Expand Edge Cases: Add tests for empty product lists, invalid timestamps, and null inputs to improve robustness.
 Use Parameterized Tests: Replace redundant test cases with @ParameterizedTest in JUnit 5 for better maintainability.
 Enhance Mocking & Verification: Improve Mockito usage to isolate components and validate interactions more effectively.
+
+### Reflection 2
+Explain what you think about your partner’s code? Are there any aspects that are still lacking from your partner’s code?
+The use of field injection (@Autowired) is not recommended because it makes unit testing more difficult.
+The setStatus method does not correctly handle order updates.
+The pay method contains repetitive return statements and can be made more readable.
+Some error handling could be improved, especially for missing orders or invalid inputs.
+
+What did you do to contribute to your partner’s code?
+Optimizing the pay method by reducing redundant return statements and simplifying logic.
+
+What code smells did you find on your partner’s code?
+Incorrect order update in setStatus: Makes unit testing harder
+Repetitive return statements in pay: Reduces readability and maintainability
+Manual digit count in voucher validation: Can be replaced with a more efficient method
+
+What refactoring steps did you suggest and execute to fix those smells?
+Used @Autowired for dependency injection: Switched to constructor-based injection, Improves testability and reduces tight coupling
+Multiple return statements in pay: Refactored into a single return statement, Improves readability and reduces redundancy
+Manually counting digits in voucher: Used .chars().filter(Character::isDigit).count();,More efficient and concise
