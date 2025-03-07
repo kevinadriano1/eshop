@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Order</title>
+</head>
+<body>
+<h1>Create Order</h1>
+<form action="/order/create" method="post">
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" required>
+    <br>
+    <label for="products">Products (comma-separated):</label>
+    <input type="text" id="products" name="products" required>
+    <br>
+    <button type="submit">Create Order</button>
+</form>
+<p th:if="${message}" style="color: green;" th:text="${message}"></p>
+<p th:if="${error}" style="color: red;" th:text="${error}"></p>
+</body>
+</html>
