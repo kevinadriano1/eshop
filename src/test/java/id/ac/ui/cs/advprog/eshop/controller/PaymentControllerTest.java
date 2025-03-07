@@ -44,9 +44,8 @@ class PaymentControllerTest {
 
     @Test
     void testShowPaymentDetail() throws Exception {
-        String paymentId = UUID.randomUUID().toString();
+        String paymentId = "5f7b9140-5c43-4199-bd3c-98463306c84b";
 
-        // Correct constructor usage
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234XYZ");
         Payment payment = new Payment(paymentId, "voucherCode", paymentData, "SUCCESS");
@@ -60,6 +59,7 @@ class PaymentControllerTest {
 
         verify(paymentService, times(1)).getPayment(paymentId);
     }
+
 
     /*** ✅ Test GET /payment/admin/list ***/
     @Test
